@@ -1,0 +1,487 @@
+﻿<Window x:Class="DragDropAnimated.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		xmlns:wpfexttools="http://schemas.xceed.com/wpf/xaml/toolkit"
+		xmlns:dragdropUI="clr-namespace:DragDropAnimated.DragDropManager.UI"
+        mc:Ignorable="d" Background="#0F0F0F"
+        Title="MainWindow" WindowStyle="SingleBorderWindow" FontFamily="SegoeUI"
+        Height="710" Width="1000" AllowsTransparency="False"
+		xmlns:ei="clr-namespace:Microsoft.Expression.Interactivity.Layout;assembly=Microsoft.Expression.Interactions"
+		xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+        ResizeMode="CanResizeWithGrip">
+	<Window.Resources>
+		<BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+		<DrawingBrush x:Key="DashedBorder" Viewport="0,0,8,8" ViewportUnits="Absolute" TileMode="Tile">
+			<DrawingBrush.Drawing>
+				<DrawingGroup>
+					<GeometryDrawing Brush="Red">
+						<GeometryDrawing.Geometry>
+							<GeometryGroup>
+								<RectangleGeometry Rect="0,0,50,50" />
+								<RectangleGeometry Rect="50,50,50,50" />
+							</GeometryGroup>
+						</GeometryDrawing.Geometry>
+					</GeometryDrawing>
+				</DrawingGroup>
+			</DrawingBrush.Drawing>
+		</DrawingBrush>
+		<SolidColorBrush x:Key="appIconBg" Color="#000000" Opacity="0.2" />
+		<SolidColorBrush x:Key="semiTranspBg" Opacity="0.8" />
+		<SolidColorBrush x:Key="secAppBg" Color="#000000" Opacity="1" />
+		<SolidColorBrush x:Key="primappOverlayBg" Color="#000000" Opacity="0.5" />
+		<SolidColorBrush x:Key="secappOverlayBg" Color="#000000" Opacity="0.5" />
+		<ControlTemplate x:Key="colorPickerButton" TargetType="{x:Type wpfexttools:ColorPicker}">
+			<Grid>
+				<ToggleButton x:Name="PART_ColorPickerToggleButton">
+					<ToggleButton.Template>
+						<ControlTemplate>
+							<Grid>
+								<Border Width="Auto" Background="{StaticResource semiTranspBg}">
+									<DockPanel Height="46" Width="46">
+										<DockPanel.Background>
+											<ImageBrush ImageSource="paint-brush.png" Stretch="UniformToFill" AlignmentX="Center" AlignmentY="Center"/>
+										</DockPanel.Background>
+									</DockPanel>
+								</Border>
+							</Grid>
+						</ControlTemplate>
+					</ToggleButton.Template>
+					<ToggleButton.Triggers>
+						<EventTrigger RoutedEvent="ToggleButton.Checked">
+							<BeginStoryboard>
+								<Storyboard>
+									<BooleanAnimationUsingKeyFrames Storyboard.TargetProperty="IsOpen" Storyboard.TargetName="PART_ColorPickerPalettePopup">
+										<DiscreteBooleanKeyFrame KeyTime="0:0:0" Value="True" />
+									</BooleanAnimationUsingKeyFrames>
+								</Storyboard>
+							</BeginStoryboard>
+						</EventTrigger>
+						<EventTrigger RoutedEvent="ToggleButton.Unchecked">
+							<BeginStoryboard>
+								<Storyboard>
+									<BooleanAnimationUsingKeyFrames Storyboard.TargetProperty="IsOpen" Storyboard.TargetName="PART_ColorPickerPalettePopup">
+										<DiscreteBooleanKeyFrame KeyTime="0:0:0" Value="False" />
+									</BooleanAnimationUsingKeyFrames>
+								</Storyboard>
+							</BeginStoryboard>
+						</EventTrigger>
+					</ToggleButton.Triggers>
+				</ToggleButton>
+				<Popup Width="50" x:Name="PART_ColorPickerPalettePopup" VerticalAlignment="Bottom" IsOpen="{Binding ElementName=PART_ColorPickerToggleButton, Path=IsChecked}" StaysOpen="False" AllowsTransparency="False" Focusable="False" HorizontalOffset="0" VerticalOffset="0" PopupAnimation="Slide">
+					<Border BorderThickness="1">
+						<Grid>
+							<Grid.RowDefinitions>
+								<RowDefinition Height="Auto" />
+								<RowDefinition Height="Auto" />
+							</Grid.RowDefinitions>
+							<Grid x:Name="_gridStandardColorsHost">
+								<Grid.RowDefinitions>
+									<RowDefinition Height="Auto" />
+									<RowDefinition Height="Auto" />
+									<RowDefinition Height="Auto" />
+									<RowDefinition Height="Auto" />
+								</Grid.RowDefinitions>
+								<!-- Available Colors -->
+								<Grid Background="Black" Grid.Row="1" Visibility="{TemplateBinding ShowAvailableColors, Converter={StaticResource BooleanToVisibilityConverter}}">
+									<Grid>
+										<Grid.RowDefinitions>
+											<RowDefinition Height="Auto" />
+											<RowDefinition />
+										</Grid.RowDefinitions>
+										<DockPanel>
+											<Button DockPanel.Dock="Right">
+												<Button.Template>
+													<ControlTemplate>
+														<Grid>
+															<Path SnapsToDevicePixels="True" ToolTip="Close Pallete" Width="7" Height="7" Margin="0,0,2,0" HorizontalAlignment="Right" VerticalAlignment="Center" Stretch="Fill" Fill="#FFFFFF" Data="F1 M 26.9166,22.1667L 37.9999,33.25L 49.0832,22.1668L 53.8332,26.9168L 42.7499,38L 53.8332,49.0834L 49.0833,53.8334L 37.9999,42.75L 26.9166,53.8334L 22.1666,49.0833L 33.25,38L 22.1667,26.9167L 26.9166,22.1667 Z " />
+														</Grid>
+													</ControlTemplate>
+												</Button.Template>
+												<Button.Triggers>
+													<EventTrigger RoutedEvent="Button.Click">
+														<BeginStoryboard>
+															<Storyboard>
+																<BooleanAnimationUsingKeyFrames Storyboard.TargetProperty="IsOpen" Storyboard.TargetName="PART_ColorPickerPalettePopup">
+																	<DiscreteBooleanKeyFrame KeyTime="0:0:0" Value="False" />
+																</BooleanAnimationUsingKeyFrames>
+															</Storyboard>
+														</BeginStoryboard>
+													</EventTrigger>
+												</Button.Triggers>
+											</Button>
+										</DockPanel>
+										<ListBox x:Name="PART_AvailableColors" Background="Black"
+                                         Grid.Row="1" DataContext="{Binding Path=DataContext,RelativeSource={RelativeSource FindAncestor,AncestorType={x:Type Window}}}"
+                                         ItemsSource="{Binding CustomColors}">
+											<ListBox.ItemsPanel>
+												<ItemsPanelTemplate>
+													<UniformGrid IsItemsHost="True" Columns="4" Margin="0"/>
+												</ItemsPanelTemplate>
+											</ListBox.ItemsPanel>
+											<ListBox.ItemTemplate>
+												<DataTemplate>
+													<Rectangle Fill="{Binding Name}" Width="8" Height="8" Stroke="#FF211E1E" OpacityMask="Black" StrokeThickness="1" />
+												</DataTemplate>
+											</ListBox.ItemTemplate>
+										</ListBox>
+									</Grid>
+								</Grid>
+								<!-- Standard Colors-->
+								<Grid Grid.Row="2" Visibility="{TemplateBinding ShowStandardColors, Converter={StaticResource BooleanToVisibilityConverter}}">
+									<Grid>
+										<Grid.RowDefinitions>
+											<RowDefinition Height="Auto" />
+											<RowDefinition Height="Auto" />
+										</Grid.RowDefinitions>
+										<TextBlock Text="{TemplateBinding StandardColorsHeader}" Background="AliceBlue" Padding="2" Margin="0,1,0,1" />
+										<ListBox x:Name="PART_StandardColors"
+                                         Grid.Row="1"
+                                         ItemsSource="{Binding StandardColors, RelativeSource={RelativeSource TemplatedParent}}"/>
+									</Grid>
+								</Grid>
+
+								<!-- Recent Colors-->
+								<Grid Grid.Row="3" Margin="0,1,0,1" Visibility="{TemplateBinding ShowRecentColors, Converter={StaticResource BooleanToVisibilityConverter}}">
+									<Grid>
+										<Grid.RowDefinitions>
+											<RowDefinition Height="Auto" />
+											<RowDefinition Height="Auto" />
+										</Grid.RowDefinitions>
+										<TextBlock Text="{TemplateBinding RecentColorsHeader}" Background="AliceBlue" Padding="2" Margin="0,1,0,1" />
+										<ListBox x:Name="PART_RecentColors"
+                                         Grid.Row="1"
+                                         ItemsSource="{Binding RecentColors, RelativeSource={RelativeSource TemplatedParent}}"/>
+										<!--Style="{StaticResource ColorListStyle}" />-->
+									</Grid>
+								</Grid>
+							</Grid>
+
+							<!-- ColorCanvas -->
+							<Grid x:Name="_colorCanvasHost" Visibility="Collapsed">
+								<wpfexttools:ColorCanvas x:Name="PART_ColorCanvas"
+                                             Background="Transparent"
+                                             BorderThickness="0"
+                                             SelectedColor="{Binding SelectedColor, RelativeSource={RelativeSource TemplatedParent}}" />
+							</Grid>
+
+							<!-- More Colors Button -->
+							<ToggleButton x:Name="_colorMode" Grid.Row="1" Content="Advanced" Margin="5" Visibility="{TemplateBinding ShowAdvancedButton, Converter={StaticResource BooleanToVisibilityConverter}}" />
+						</Grid>
+					</Border>
+				</Popup>
+			</Grid>
+			<ControlTemplate.Triggers>
+				<Trigger SourceName="_colorMode" Property="IsChecked" Value="True">
+					<Setter TargetName="_colorMode" Property="Content" Value="Standard" />
+					<Setter TargetName="_colorCanvasHost" Property="Visibility" Value="Visible" />
+					<Setter TargetName="_gridStandardColorsHost" Property="Visibility" Value="Collapsed" />
+				</Trigger>
+			</ControlTemplate.Triggers>
+		</ControlTemplate>
+		<Style x:Key="PrimaryAppTitleText" TargetType="TextBlock">
+			<Setter Property="Foreground" Value="#FFFFFF"/>
+			<Setter Property="FontSize" Value="18"/>
+			<Setter Property="FontFamily" Value="Segoe UI Light"/>
+			<Setter Property="TextWrapping" Value="Wrap"/>
+			<Setter Property="HorizontalAlignment" Value="Left"/>
+			<Setter Property="VerticalAlignment" Value="Center"/>
+			<Setter Property="Margin" Value="16,0,16,0"/>
+		</Style>
+		<Style x:Key="SecondaryAppTitleText" TargetType="TextBlock">
+			<Setter Property="Foreground" Value="#FFFFFF"/>
+			<Setter Property="FontSize" Value="15"/>
+			<Setter Property="FontFamily" Value="Segoe UI Light"/>
+			<Setter Property="TextWrapping" Value="Wrap"/>
+			<Setter Property="HorizontalAlignment" Value="Left"/>
+			<Setter Property="VerticalAlignment" Value="Center"/>
+			<Setter Property="Margin" Value="16,0,16,0"/>
+		</Style>
+		<Style x:Key="PrimaryAppButton" TargetType="{x:Type Button}">
+			<Setter Property="Margin" Value="0,0,10,10"/>
+			<Setter Property="BorderThickness" Value="0"/>
+			<Setter Property="Foreground" Value="#FFFFFF"/>
+			<Setter Property="Width" Value="280"/>
+			<Setter Property="Height" Value="94"/>
+			<Setter Property="Template">
+				<Setter.Value>
+					<ControlTemplate>
+						<Border x:Name="OuterPanel" BorderBrush="Transparent" BorderThickness="2">
+							<Border.Style>
+								<Style TargetType="Border">
+									<Style.Triggers>
+										<Trigger Property="IsEnabled" Value="True">
+											<Setter Property="Background" Value="{Binding BackColor}"/>
+										</Trigger>
+										<Trigger Property="IsEnabled" Value="False">
+											<Setter Property="Background" Value="#b7b7b7"/>
+										</Trigger>
+									</Style.Triggers>
+								</Style>
+							</Border.Style>
+							<Grid x:Name="InnerPanel">
+								<Border x:Name="AppIconPanel" Grid.Column="0" Width="94" Background="{StaticResource appIconBg}">
+									<DockPanel x:Name="AppIcon">
+										<DockPanel.Background>
+											<DrawingBrush Stretch="None" Drawing="{Binding ImageSource}" AlignmentX="Center" AlignmentY="Center"/>
+										</DockPanel.Background>
+									</DockPanel>
+								</Border>
+								<Border Grid.Column="1" Height="94">
+									<TextBlock x:Name="AppTitle" Text="{Binding ProcessName}" Style="{StaticResource PrimaryAppTitleText}" />
+								</Border>
+								<Border x:Name="EditColorPanel" Grid.Column="2" Width="50" Visibility="Collapsed" Background="Black">
+									<wpfexttools:ColorPicker Background="Transparent" Template="{StaticResource colorPickerButton}" DisplayColorAndName="False" ShowStandardColors="False" ShowAdvancedButton="False" ShowRecentColors="False" SelectedColor="{Binding BackColor}"/>
+								</Border>
+								<Grid.ColumnDefinitions>
+									<ColumnDefinition Width="Auto"/>
+									<ColumnDefinition Width="*"/>
+									<ColumnDefinition Width="Auto"/>
+								</Grid.ColumnDefinitions>
+							</Grid>
+						</Border>
+						<ControlTemplate.Triggers>
+							<MultiTrigger>
+								<MultiTrigger.Conditions>
+									<Condition Property="IsMouseOver" Value="True"/>
+									<Condition Property="IsEnabled" Value="True"/>
+								</MultiTrigger.Conditions>
+								<MultiTrigger.Setters>
+									<Setter TargetName="InnerPanel" Property="Background" Value="{StaticResource primappOverlayBg}"/>
+									<Setter TargetName="OuterPanel" Property="BorderBrush" Value="#0084EC"/>
+								</MultiTrigger.Setters>
+							</MultiTrigger>
+							<Trigger Property="IsEnabled" Value="False">
+								<Setter TargetName="AppTitle" Property="Foreground" Value="{StaticResource appIconBg}"/>
+							</Trigger>
+							<!--<DataTrigger Binding="{Binding ElementName=OuterPanel, Path=IsLaunched}" Value="True">
+								<Setter TargetName="OuterPanel" Property="BorderBrush" Value="#0084EC"/>
+							</DataTrigger>-->
+							<MultiDataTrigger>
+								<MultiDataTrigger.Conditions>
+									<Condition Binding="{Binding RelativeSource={RelativeSource Self}, Path=IsMouseOver}" Value="True"/>
+									<Condition Binding="{Binding ElementName=PrimaryAppContainer,Path=Tag}" Value="True" />
+								</MultiDataTrigger.Conditions>
+								<MultiDataTrigger.Setters>
+									<Setter TargetName="EditColorPanel" Property="Visibility" Value="Visible"/>
+									<Setter TargetName="OuterPanel" Property="BorderBrush" Value="{StaticResource DashedBorder}"/>
+									<Setter TargetName="AppTitle" Property="Opacity" Value="0.5"/>
+									<Setter TargetName="AppIconPanel" Property="Opacity" Value="0.5"/>
+									<Setter TargetName="EditColorPanel" Property="Background" Value="{StaticResource primappOverlayBg}"/>
+									<Setter TargetName="InnerPanel" Property="Background">
+										<Setter.Value>
+											<DrawingBrush Stretch="None" Drawing="{StaticResource moveCursorIcon}" AlignmentX="Center" AlignmentY="Center"/>
+										</Setter.Value>
+									</Setter>
+								</MultiDataTrigger.Setters>
+							</MultiDataTrigger>
+							<Trigger Property="IsMouseOver" Value="True">
+								<Setter Property="Cursor" Value="Hand"/>
+							</Trigger>
+						</ControlTemplate.Triggers>
+					</ControlTemplate>
+				</Setter.Value>
+			</Setter>
+		</Style>
+		<Style x:Key="SecondaryAppButton" TargetType="{x:Type Button}">
+			<Setter Property="Margin" Value="0,0,0,1"/>
+			<Setter Property="Width" Value="300"/>
+			<Setter Property="Height" Value="60"/>
+			<Setter Property="HorizontalAlignment" Value="Left"/>
+			<Setter Property="Template">
+				<Setter.Value>
+					<ControlTemplate>
+						<Border x:Name="OuterPanel" BorderBrush="Transparent" BorderThickness="1">
+							<Grid x:Name="InnerPanel">
+								<Grid.Style>
+									<Style TargetType="Grid">
+										<Style.Triggers>
+											<Trigger Property="IsEnabled" Value="True">
+												<Setter Property="Background" Value="{StaticResource secAppBg}"/>
+											</Trigger>
+											<Trigger Property="IsEnabled" Value="False">
+												<Setter Property="Background" Value="#b7b7b7"/>
+											</Trigger>
+										</Style.Triggers>
+									</Style>
+								</Grid.Style>
+								<Border x:Name="AppIconPanel" Grid.Column="0" Height="26" Width="26" Background="{Binding BackColor}">
+									<Rectangle Height="16" Width="16" Stroke="Transparent">
+										<Rectangle.Fill>
+											<DrawingBrush Stretch="UniformToFill" Drawing="{Binding ImageSource}" AlignmentX="Center" AlignmentY="Center"/>
+										</Rectangle.Fill>
+									</Rectangle>
+								</Border>
+								<Border Grid.Column="1">
+									<TextBlock x:Name="AppTitle" Text="{Binding ProcessName}" Style="{StaticResource SecondaryAppTitleText}" />
+								</Border>
+								<Border x:Name="EditColorPanel" Grid.Column="2" Width="50" Visibility="Collapsed" Background="Black">
+									<wpfexttools:ColorPicker Background="Transparent" Template="{StaticResource colorPickerButton}" DisplayColorAndName="False" ShowStandardColors="False" ShowAdvancedButton="False" ShowRecentColors="False" SelectedColor="{Binding BackColor}"/>
+								</Border>
+								<Grid.ColumnDefinitions>
+									<ColumnDefinition Width="19*"/>
+									<ColumnDefinition Width="71*"/>
+									<ColumnDefinition Width="10*"/>
+								</Grid.ColumnDefinitions>
+							</Grid>
+						</Border>
+						<ControlTemplate.Triggers>
+							<MultiTrigger>
+								<MultiTrigger.Conditions>
+									<Condition Property="IsMouseOver" Value="True"/>
+									<Condition Property="IsEnabled" Value="True"/>
+								</MultiTrigger.Conditions>
+								<MultiTrigger.Setters>
+									<Setter TargetName="InnerPanel" Property="Background" Value="{StaticResource secappOverlayBg}"/>
+									<Setter TargetName="OuterPanel" Property="BorderBrush" Value="#0084EC"/>
+								</MultiTrigger.Setters>
+							</MultiTrigger>
+							<Trigger Property="IsEnabled" Value="False">
+								<Setter TargetName="AppTitle" Property="Foreground" Value="{StaticResource appIconBg}"/>
+								<Setter TargetName="AppIconPanel" Property="Background" Value="{StaticResource appIconBg}"/>
+							</Trigger>
+							<!--<DataTrigger Binding="{Binding ElementName=OuterPanel, Path=IsLaunched}" Value="True">
+								<Setter TargetName="OuterPanel" Property="BorderBrush" Value="#0084EC"/>
+							</DataTrigger>-->
+							<MultiDataTrigger>
+								<MultiDataTrigger.Conditions>
+									<Condition Binding="{Binding RelativeSource={RelativeSource Self}, Path=IsMouseOver}" Value="True"/>
+									<Condition Binding="{Binding ElementName=SecondaryAppContainer,Path=Tag}" Value="True" />
+								</MultiDataTrigger.Conditions>
+								<MultiDataTrigger.Setters>
+									<Setter TargetName="EditColorPanel" Property="Visibility" Value="Visible"/>
+									<Setter TargetName="OuterPanel" Property="BorderBrush" Value="{StaticResource DashedBorder}"/>
+									<Setter TargetName="AppTitle" Property="Opacity" Value="0.5"/>
+									<Setter TargetName="AppIconPanel" Property="Opacity" Value="0.5"/>
+									<Setter TargetName="EditColorPanel" Property="Background" Value="{StaticResource secappOverlayBg}"/>
+									<Setter TargetName="InnerPanel" Property="Background">
+										<Setter.Value>
+											<DrawingBrush Stretch="None" Drawing="{StaticResource secAppMoveCursorIcon}" AlignmentX="Center" AlignmentY="Center"/>
+										</Setter.Value>
+									</Setter>
+								</MultiDataTrigger.Setters>
+							</MultiDataTrigger>
+							<Trigger Property="IsMouseOver" Value="True">
+								<Setter Property="Cursor" Value="Hand"/>
+							</Trigger>
+						</ControlTemplate.Triggers>
+					</ControlTemplate>
+				</Setter.Value>
+			</Setter>
+		</Style>
+		<Style x:Key="ItemContStyle" TargetType="ListViewItem">
+			<Style.Resources>
+				<LinearGradientBrush x:Key="MouseOverBrush" StartPoint="0.5, 0" EndPoint="0.5, 1">
+					<GradientStop Color="#22000000" Offset="0" />
+					<GradientStop Color="#44000000" Offset="0.4" />
+					<GradientStop Color="#55000000" Offset="0.6" />
+					<GradientStop Color="#33000000" Offset="0.9" />
+					<GradientStop Color="#22000000" Offset="1" />
+				</LinearGradientBrush>
+			</Style.Resources>
+			<Setter Property="Padding" Value="0,4" />
+			<Setter Property="HorizontalContentAlignment" Value="Stretch" />
+			<!-- The default control template for ListViewItem has a Border 
+           which contains the item's content. -->
+			<Setter Property="Border.BorderThickness" Value="0,0,0,0.5" />
+			<Setter Property="Border.BorderBrush" Value="LightGray" />
+			<!-- These triggers react to changes in the attached properties set
+           during a managed drag-drop operation. -->
+			<Style.Triggers>
+				<Trigger Property="IsSelected"
+                         Value="True">
+					<Setter Property="Background"
+                            Value="{x:Null}" />
+					<Setter Property="BorderBrush"
+                            Value="{x:Null}" />
+				</Trigger>
+				<Trigger Property="dragdropUI:ListViewItemDragState.IsBeingDragged" Value="True">
+					<Setter Property="Background" Value="{StaticResource MouseOverBrush}" />
+					<Setter Property="FontWeight" Value="SemiBold" />
+				</Trigger>
+				<Trigger Property="dragdropUI:ListViewItemDragState.IsUnderDragCursor" Value="True">
+					<Setter Property="Background" Value="{StaticResource MouseOverBrush}" />
+				</Trigger>
+			</Style.Triggers>
+		</Style>
+	</Window.Resources>
+	<Grid x:Name="GridMain">
+		<Grid.RowDefinitions>
+			<RowDefinition Height="50"/>
+			<RowDefinition Height="*"/>
+		</Grid.RowDefinitions>
+		<Grid Grid.Row="0" VerticalAlignment="Center" HorizontalAlignment="Stretch" Margin="18,18,0,0">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="Auto"></ColumnDefinition>
+				<ColumnDefinition Width="Auto"></ColumnDefinition>
+			</Grid.ColumnDefinitions>
+			<TextBlock Grid.Column="0" Text="Toggle Drag Drop" Style="{StaticResource PrimaryAppTitleText}"/>
+			<CheckBox Grid.Column="1" Name="chkManageDragging" IsChecked="False"/>
+		</Grid>
+		<Grid Grid.Row="1" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="18,18,0,0">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="{Binding DataContext.PrimaryAppPanelWidth}"></ColumnDefinition>
+				<ColumnDefinition Width="Auto"></ColumnDefinition>
+			</Grid.ColumnDefinitions>
+			<ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Grid.Column="0">
+				<ListView x:Name="PrimaryAppContainer" AllowDrop="True" Tag="{Binding IsEditMode}" DataContext="{Binding PrimaryApps}" ItemsSource="{Binding Apps}" Margin="0,0,2,0">
+					<ListView.Resources>
+						<SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" 
+                     Color="Transparent"/>
+					</ListView.Resources>
+					<ListView.ItemsPanel>
+						<ItemsPanelTemplate>
+							<WrapPanel Width="{Binding RelativeSource={RelativeSource FindAncestor,AncestorType={x:Type ScrollViewer}},Path=ActualWidth}">
+								<i:Interaction.Behaviors>
+									<ei:FluidMoveBehavior IsActive="{Binding IsEditMode}" AppliesTo="Children" Duration="0:0:2">
+										<ei:FluidMoveBehavior.EaseY>
+											<BackEase EasingMode="EaseInOut" Amplitude=".1"/>
+										</ei:FluidMoveBehavior.EaseY>
+										<ei:FluidMoveBehavior.EaseX>
+											<BackEase EasingMode="EaseInOut" Amplitude=".1"/>
+										</ei:FluidMoveBehavior.EaseX>
+									</ei:FluidMoveBehavior>
+								</i:Interaction.Behaviors>
+							</WrapPanel>
+						</ItemsPanelTemplate>
+					</ListView.ItemsPanel>
+					<ListView.ItemTemplate>
+						<DataTemplate>
+							<Button Style="{StaticResource PrimaryAppButton}" />
+						</DataTemplate>
+					</ListView.ItemTemplate>
+				</ListView>
+			</ScrollViewer>
+			<ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Grid.Column="1">
+				<ListView x:Name="SecondaryAppContainer" Tag="{Binding IsEditMode}" DataContext="{Binding SecondaryApps}" ItemsSource="{Binding Apps}" HorizontalAlignment="Right" Margin="2,0,2,0">
+					<ListView.Resources>
+						<SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" 
+                     Color="Transparent"/>
+					</ListView.Resources>
+					<ListView.ItemsPanel>
+						<ItemsPanelTemplate>
+							<StackPanel Orientation="Vertical">
+								<i:Interaction.Behaviors>
+									<ei:FluidMoveBehavior IsActive="{Binding IsEditMode}" AppliesTo="Children" Duration="0:0:1">
+										<ei:FluidMoveBehavior.EaseY>
+											<BackEase EasingMode="EaseInOut" Amplitude=".1"/>
+										</ei:FluidMoveBehavior.EaseY>
+										<ei:FluidMoveBehavior.EaseX>
+											<BackEase EasingMode="EaseInOut" Amplitude=".1"/>
+										</ei:FluidMoveBehavior.EaseX>
+									</ei:FluidMoveBehavior>
+								</i:Interaction.Behaviors>
+							</StackPanel>
+						</ItemsPanelTemplate>
+					</ListView.ItemsPanel>
+					<ListView.ItemTemplate>
+						<DataTemplate>
+							<Button Style="{StaticResource SecondaryAppButton}" />
+						</DataTemplate>
+					</ListView.ItemTemplate>
+				</ListView>
+			</ScrollViewer>
+		</Grid>
+	</Grid>
+</Window>

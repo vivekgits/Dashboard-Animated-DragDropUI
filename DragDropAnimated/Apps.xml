@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ArrayOfApps xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<Apps>
+		<ProcessName>IE1</ProcessName>
+		<ProcessFullPath>iexplore.exe</ProcessFullPath>
+		<CommandArguements>-noframemerging https://bing.com </CommandArguements>
+		<Type>Primary</Type>
+		<BackColor>#498285</BackColor>
+		<ImagePath>iExplorerIcon</ImagePath>
+	</Apps>
+	<Apps>
+		<ProcessName>Chrome1</ProcessName>
+		<ProcessFullPath>chrome.exe</ProcessFullPath>
+		<CommandArguements>https://google.com</CommandArguements>
+		<Type>Primary</Type>
+		<BackColor>#EA005E</BackColor>
+		<ImagePath>gChromeIcon</ImagePath>
+	</Apps>
+	<Apps>
+		<ProcessName>Chrome2</ProcessName>
+		<ProcessFullPath>chrome.exe</ProcessFullPath>
+		<CommandArguements>https://google.com</CommandArguements>
+		<Type>Primary</Type>
+		<BackColor>#EA005E</BackColor>
+		<ImagePath>gChromeIcon</ImagePath>
+	</Apps>
+	<Apps>
+		<ProcessName>Lync</ProcessName>
+		<ProcessFullPath>C:\Program Files (x86)\Microsoft Office\Office15\lync.exe</ProcessFullPath>
+		<Type>Primary</Type>
+		<BackColor>#8764B8</BackColor>
+		<ImagePath>lyncChatIcon</ImagePath>
+	</Apps>
+	<Apps>
+		<ProcessName>Outlook</ProcessName>
+		<ProcessFullPath>iexplore.exe</ProcessFullPath>
+		<CommandArguements>-noframemerging https://mail.outlook.com</CommandArguements>
+		<Type>Secondary</Type>
+		<BackColor>#0063B1</BackColor>
+		<ImagePath>iExplorerIcon</ImagePath>
+	</Apps>
+	<Apps>
+		<ProcessName>IE2</ProcessName>
+		<ProcessFullPath>iexplore.exe</ProcessFullPath>
+		<CommandArguements>-noframemerging https://msdn.com</CommandArguements>
+		<Type>Secondary</Type>
+		<BackColor>#498285</BackColor>
+		<ImagePath>iExplorerIcon</ImagePath>
+	</Apps>
+	<Apps>
+		<ProcessName>Chrome3</ProcessName>
+		<ProcessFullPath>chrome.exe</ProcessFullPath>
+		<CommandArguements>https://google.com</CommandArguements>
+		<Type>Secondary</Type>
+		<BackColor>#EA005E</BackColor>
+		<ImagePath>gChromeIcon</ImagePath>
+	</Apps>
+	<Apps>
+		<ProcessName>IE3</ProcessName>
+		<ProcessFullPath>iexplore.exe</ProcessFullPath>
+		<CommandArguements>-noframemerging https://msn.com</CommandArguements>
+		<Type>Secondary</Type>
+		<BackColor>#498285</BackColor>
+		<ImagePath>iExplorerIcon</ImagePath>
+	</Apps>
+</ArrayOfApps>
